@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Users, Plus } from 'lucide-react';
 import { ClientCard } from '../components/clients/ClientCard';
 import { ClientFormModal } from '../components/clients/ClientFormModal';
-import { SkeletonCard } from '../components/ui/Skeleton';
+import { SkeletonCard } from '../components/ui/skeleton';
 import { EmptyState } from '../components/ui/EmptyState';
 import { useClientsOverview } from '../hooks/useClientsOverview';
 import { useRefresh } from '../components/layout/Layout';

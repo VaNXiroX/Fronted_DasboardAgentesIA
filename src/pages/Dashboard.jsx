@@ -4,7 +4,7 @@ import { Users, Bot, DollarSign, AlertTriangle, CheckCircle, AlertCircle } from 
 import { KpiCard } from '../components/ui/KpiCard';
 import { BillingBadge } from '../components/ui/BillingBadge';
 import { ClientsTable } from '../components/clients/ClientsTable';
-import { SkeletonTable } from '../components/ui/Skeleton';
+import { SkeletonTable } from '../components/ui/skeleton';
 import { EmptyState } from '../components/ui/EmptyState';
 import { useClientsOverview } from '../hooks/useClientsOverview';
 import { useRefresh } from '../components/layout/Layout';

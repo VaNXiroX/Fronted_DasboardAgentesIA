@@ -7,7 +7,7 @@ import { AgentModelBadge } from '../components/ui/AgentModelBadge';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { AgentFormModal } from '../components/agents/AgentFormModal';
 import { EmptyState } from '../components/ui/EmptyState';
-import { SkeletonTable } from '../components/ui/Skeleton';
+import { SkeletonTable } from '../components/ui/skeleton';
 import { useRefresh } from '../components/layout/Layout';
 
 const STATUS_FILTERS = [

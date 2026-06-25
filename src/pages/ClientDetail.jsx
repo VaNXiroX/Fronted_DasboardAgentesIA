@@ -16,7 +16,7 @@ import { RegisterPaymentModal } from '../components/billing/RegisterPaymentModal
 import { ClientFormModal } from '../components/clients/ClientFormModal';
 import { AgentFormModal } from '../components/agents/AgentFormModal';
 import { EmptyState } from '../components/ui/EmptyState';
-import { SkeletonTable } from '../components/ui/Skeleton';
+import { SkeletonTable } from '../components/ui/skeleton';
 import { useToast } from '../lib/toast';
 import { useRefresh } from '../components/layout/Layout';
 import { formatMXN, formatDateShort, formatSinceDate } from '../lib/format';
