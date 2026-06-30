@@ -4,7 +4,7 @@ import { createAgent, updateAgent } from '../../api/agents';
 import { useToast } from '../../lib/toast';
 
 const AGENT_TYPES = ['ventas', 'soporte', 'cobranza', 'general', 'asistente_personal', 'agenda'];
-const AGENT_MODELS = ['gpt-4o-mini', 'gpt-4o', 'claude-sonnet-4.5', 'gemini-2.0-flash', 'gemini-1.5-pro'];
+const AGENT_MODELS = ['gpt-4o-mini', 'gpt-4o', 'claude-3-5-sonnet-20241022', 'gemini-2.0-flash', 'gemini-1.5-pro'];
 const EMPTY_FORM = {
   name: '',
   type: 'general',
