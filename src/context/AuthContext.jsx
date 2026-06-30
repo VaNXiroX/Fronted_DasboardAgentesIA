@@ -12,15 +12,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Inyectar token en todas las peticiones axios
-  useEffect(() => {
-    const interceptor = apiClient.interceptors.request.use((config) => {
-      const t = localStorage.getItem(TOKEN_KEY);
-      if (t) config.headers.Authorization = `Bearer ${t}`;
-      return config;
-    });
-    return () => apiClient.interceptors.request.eject(interceptor);
-  }, []);
 
   // Al arrancar: validar token guardado
   useEffect(() => {
