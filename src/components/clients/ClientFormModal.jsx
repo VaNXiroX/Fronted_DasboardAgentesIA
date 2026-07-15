@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
 import { createClient, updateClient } from '../../api/clients';
+import apiClient from '../../api/client';
 import { useToast } from '../../lib/toast';
 import { slugify } from '../../lib/format';
 
 const EMPTY_FORM = {
   name: '',
   slug: '',
+  plan_id: '',
   status: 'active',
   start_date: new Date().toISOString().slice(0, 10),
   notes: '',
@@ -17,14 +19,24 @@ export function ClientFormModal({ open, onClose, onSuccess, initial }) {
   const isEdit = !!initial;
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [plans, setPlans] = useState([]);
 
   useEffect(() => {
     if (open) {
       setForm(
         initial
-          ? { ...EMPTY_FORM, ...initial, start_date: initial.start_date?.slice(0, 10) ?? '' }
+          ? { 
+              ...EMPTY_FORM, 
+              ...initial, 
+              start_date: initial.start_date?.slice(0, 10) ?? '',
+              plan_id: initial.plan_id ?? '' 
+            }
           : EMPTY_FORM
       );
+
+      apiClient.get('/api/plans')
+        .then((r) => setPlans(r.data))
+        .catch(console.error);
     }
   }, [open, initial]);
 
@@ -44,6 +56,7 @@ export function ClientFormModal({ open, onClose, onSuccess, initial }) {
       const payload = { ...form };
       if (!payload.start_date) delete payload.start_date;
       if (!payload.notes) delete payload.notes;
+      if (payload.plan_id === '') payload.plan_id = null;
 
       if (isEdit) {
         await updateClient(initial.id, payload);
@@ -89,6 +102,24 @@ export function ClientFormModal({ open, onClose, onSuccess, initial }) {
             placeholder="nombre-del-cliente"
             className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30"
           />
+        </div>
+
+        {/* Plan */}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-1.5">Plan</label>
+          <select
+            name="plan_id"
+            value={form.plan_id || ''}
+            onChange={handleChange}
+            className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30"
+          >
+            <option value="">Selecciona un plan...</option>
+            {plans.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name} - ${p.monthly_fee ?? 0}/mes
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Status */}

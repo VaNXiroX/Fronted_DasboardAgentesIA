@@ -36,6 +36,7 @@ export default function ClientDetail() {
   const [client, setClient] = useState(null);
   const [agents, setAgents] = useState([]);
   const [billing, setBilling] = useState(null);
+  const [billingError, setBillingError] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const [showEdit, setShowEdit] = useState(false);
@@ -45,15 +46,17 @@ export default function ClientDetail() {
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
+    setBillingError(false);
     try {
       const [c, ag, bi] = await Promise.all([
         getClient(id),
         getClientAgents(id),
-        getBilling(id),
+        getBilling(id).catch(() => null),
       ]);
       setClient(c);
       setAgents(ag);
       setBilling(bi);
+      setBillingError(bi === null);
       setClientName?.(c.name);
     } catch {
       toast.error('Error al cargar los datos del cliente');
@@ -221,60 +224,80 @@ export default function ClientDetail() {
       )}
 
       {/* Tab: Facturación */}
-      {activeTab === 'facturacion' && billing && (
+      {activeTab === 'facturacion' && (
         <div className="space-y-6">
-          {/* KPI cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <KpiCard icon={FileText} label="Meses activo" value={billing.months_active} accent="slate" />
-            <KpiCard icon={FileText} label="Meses pagados" value={billing.months_paid} accent="emerald" />
-            <KpiCard
-              icon={FileText}
-              label="Meses adeudados"
-              value={billing.months_owed}
-              accent={billing.months_owed > 0 ? 'red' : 'emerald'}
-            />
-            <KpiCard
-              icon={CreditCard}
-              label="Total adeudado"
-              value={
-                <span className={billing.total_owed_mxn > 0 ? 'text-red-400' : 'text-emerald-400'}>
-                  {formatMXN(billing.total_owed_mxn)}
-                </span>
-              }
-              accent={billing.total_owed_mxn > 0 ? 'red' : 'emerald'}
-            />
-          </div>
-
-          {/* Payment calendar */}
-          <div className="bg-slate-800 border border-slate-700 rounded-xl p-5">
-            <h2 className="text-white font-semibold mb-4">Calendario de pagos</h2>
-            <PaymentCalendar
-              startDate={client.start_date}
-              paidPeriods={billing.paid_periods}
-              missingPeriods={billing.missing_periods}
-              payments={billing.payments}
-            />
-          </div>
-
-          {/* Payments table */}
-          <div className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700">
-              <h2 className="text-white font-semibold">Historial de pagos</h2>
+          {billingError ? (
+            <div className="flex flex-col items-center justify-center py-16 px-6 text-center bg-slate-800 border border-slate-700 rounded-xl">
+              <div className="mb-4 p-4 bg-slate-800 rounded-2xl border border-slate-700">
+                <CreditCard className="w-8 h-8 text-slate-400" />
+              </div>
+              <p className="text-slate-300 font-semibold text-lg">Error de facturación</p>
+              <p className="text-slate-500 text-sm mt-1 max-w-sm mb-6">
+                No se pudo cargar la información de facturación. Verifica que el cliente tenga un plan asignado.
+              </p>
               <button
-                onClick={() => setShowPaymentModal(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 transition-colors text-xs font-medium"
+                onClick={fetchAll}
+                className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm transition-colors"
               >
-                <Plus className="w-3.5 h-3.5" />
-                Registrar pago
+                Reintentar
               </button>
             </div>
-            <div className="p-4">
-              <PaymentsTable
-                payments={billing.payments}
-                onDelete={handleDeletePayment}
-              />
-            </div>
-          </div>
+          ) : billing ? (
+            <>
+              {/* KPI cards */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <KpiCard icon={FileText} label="Meses activo" value={billing.months_active} accent="slate" />
+                <KpiCard icon={FileText} label="Meses pagados" value={billing.months_paid} accent="emerald" />
+                <KpiCard
+                  icon={FileText}
+                  label="Meses adeudados"
+                  value={billing.months_owed}
+                  accent={billing.months_owed > 0 ? 'red' : 'emerald'}
+                />
+                <KpiCard
+                  icon={CreditCard}
+                  label="Total adeudado"
+                  value={
+                    <span className={billing.total_owed_mxn > 0 ? 'text-red-400' : 'text-emerald-400'}>
+                      {formatMXN(billing.total_owed_mxn)}
+                    </span>
+                  }
+                  accent={billing.total_owed_mxn > 0 ? 'red' : 'emerald'}
+                />
+              </div>
+
+              {/* Payment calendar */}
+              <div className="bg-slate-800 border border-slate-700 rounded-xl p-5">
+                <h2 className="text-white font-semibold mb-4">Calendario de pagos</h2>
+                <PaymentCalendar
+                  startDate={client.start_date}
+                  paidPeriods={billing.paid_periods}
+                  missingPeriods={billing.missing_periods}
+                  payments={billing.payments}
+                />
+              </div>
+
+              {/* Payments table */}
+              <div className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700">
+                  <h2 className="text-white font-semibold">Historial de pagos</h2>
+                  <button
+                    onClick={() => setShowPaymentModal(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 transition-colors text-xs font-medium"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Registrar pago
+                  </button>
+                </div>
+                <div className="p-4">
+                  <PaymentsTable
+                    payments={billing.payments}
+                    onDelete={handleDeletePayment}
+                  />
+                </div>
+              </div>
+            </>
+          ) : null}
         </div>
       )}
 
