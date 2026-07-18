@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Users, Plus } from 'lucide-react';
 import { ClientCard } from '../components/clients/ClientCard';
 import { ClientFormModal } from '../components/clients/ClientFormModal';
+import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { deleteClient } from '../api/clients';
 import { useToast } from '../lib/toast';
 import { SkeletonCard } from '../components/ui/skeleton';
@@ -22,18 +23,22 @@ export default function Clients() {
   const toast = useToast();
   const [filter, setFilter] = useState('all');
   const [showCreate, setShowCreate] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState(null);
 
   useEffect(() => {
     refetch();
   }, [refreshKey]);
 
-  const handleDeleteClient = async (id) => {
+  const handleDeleteClient = async () => {
+    if (!clientToDelete) return;
     try {
-      await deleteClient(id);
-      toast.success('Cliente eliminado');
+      await deleteClient(clientToDelete.id);
+      toast.success('Cliente eliminado exitosamente');
       refetch();
     } catch {
       toast.error('Error al eliminar el cliente');
+    } finally {
+      setClientToDelete(null);
     }
   };
 
@@ -100,7 +105,7 @@ export default function Clients() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filtered.map((c) => (
-            <ClientCard key={c.id} client={c} onDelete={handleDeleteClient} />
+            <ClientCard key={c.id} client={c} onDelete={setClientToDelete} />
           ))}
         </div>
       )}
@@ -110,6 +115,16 @@ export default function Clients() {
         open={showCreate}
         onClose={() => setShowCreate(false)}
         onSuccess={refetch}
+      />
+
+      <ConfirmModal
+        isOpen={!!clientToDelete}
+        onClose={() => setClientToDelete(null)}
+        onConfirm={handleDeleteClient}
+        title="Eliminar Cliente"
+        message={`¿Estás seguro que deseas eliminar permanentemente a ${clientToDelete?.name}? Toda su información, agentes y registros de facturación se perderán.`}
+        confirmText="Eliminar Cliente"
+        isDanger={true}
       />
     </div>
   );

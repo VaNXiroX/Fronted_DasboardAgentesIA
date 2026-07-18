@@ -18,6 +18,7 @@ import { ClientFormModal } from '../components/clients/ClientFormModal';
 import { AgentFormModal } from '../components/agents/AgentFormModal';
 import { EmptyState } from '../components/ui/EmptyState';
 import { SkeletonTable } from '../components/ui/skeleton';
+import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { useToast } from '../lib/toast';
 import { useRefresh } from '../components/layout/Layout';
 import { formatMXN, formatDateShort, formatSinceDate, formatMonthLabel } from '../lib/format';
@@ -46,6 +47,10 @@ export default function ClientDetail() {
   const [showAgentForm, setShowAgentForm] = useState(false);
   const [editingAgent, setEditingAgent] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  
+  const [showDeleteClientModal, setShowDeleteClientModal] = useState(false);
+  const [agentToDelete, setAgentToDelete] = useState(null);
+  const [paymentToDelete, setPaymentToDelete] = useState(null);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
@@ -73,10 +78,12 @@ export default function ClientDetail() {
   useEffect(() => { fetchAll(); }, [fetchAll, refreshKey]);
 
   // Delete payment with optimistic update
-  const handleDeletePayment = async (payment) => {
-    if (!window.confirm(`¿Eliminar el pago de ${payment.period_month}?`)) return;
+  const handleDeletePayment = async () => {
+    if (!paymentToDelete) return;
+    const payment = paymentToDelete;
+    
+    // optimistic UI update
     const prev = billing;
-    // Optimistic
     setBilling((b) => b ? {
       ...b,
       payments: b.payments.filter((p) => p.id !== payment.id),
@@ -90,28 +97,33 @@ export default function ClientDetail() {
     } catch {
       setBilling(prev); // rollback
       toast.error('Error al eliminar el pago');
+    } finally {
+      setPaymentToDelete(null);
     }
   };
 
   const handleDeleteClient = async () => {
-    if (!window.confirm(`¿Seguro que deseas eliminar el cliente ${client.name}?`)) return;
     try {
       await deleteClient(id);
       toast.success('Cliente eliminado');
       navigate('/clients');
     } catch {
       toast.error('Error al eliminar el cliente');
+    } finally {
+      setShowDeleteClientModal(false);
     }
   };
 
-  const handleDeleteAgent = async (agent) => {
-    if (!window.confirm(`¿Seguro que deseas eliminar el agente ${agent.name}?`)) return;
+  const handleDeleteAgent = async () => {
+    if (!agentToDelete) return;
     try {
-      await deleteAgent(id, agent.id);
+      await deleteAgent(id, agentToDelete.id);
       toast.success('Agente eliminado');
       fetchAll();
     } catch {
       toast.error('Error al eliminar el agente');
+    } finally {
+      setAgentToDelete(null);
     }
   };
 
@@ -178,7 +190,7 @@ export default function ClientDetail() {
             Editar
           </button>
           <button
-            onClick={handleDeleteClient}
+            onClick={() => setShowDeleteClientModal(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-600 text-slate-300 hover:text-red-400 hover:border-red-500/40 transition-colors text-sm"
           >
             <Trash2 className="w-4 h-4" />
@@ -312,7 +324,7 @@ export default function ClientDetail() {
                               <Edit2 className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => handleDeleteAgent(a)}
+                              onClick={() => setAgentToDelete(a)}
                               className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                               title="Eliminar agente"
                             >
@@ -426,7 +438,7 @@ export default function ClientDetail() {
                 <div className="p-4">
                   <PaymentsTable
                     payments={billing.payments}
-                    onDelete={handleDeletePayment}
+                    onDelete={setPaymentToDelete}
                   />
                 </div>
               </div>
@@ -457,6 +469,37 @@ export default function ClientDetail() {
           onClose={() => setShowPaymentModal(false)}
         />
       )}
+
+      {/* Confirmation Modals */}
+      <ConfirmModal
+        isOpen={showDeleteClientModal}
+        onClose={() => setShowDeleteClientModal(false)}
+        onConfirm={handleDeleteClient}
+        title="Eliminar Cliente"
+        message={`¿Estás seguro que deseas eliminar permanentemente a ${client?.name}? Todo el historial de pagos y agentes vinculados también serán borrados.`}
+        confirmText="Sí, eliminar cliente"
+        isDanger={true}
+      />
+
+      <ConfirmModal
+        isOpen={!!agentToDelete}
+        onClose={() => setAgentToDelete(null)}
+        onConfirm={handleDeleteAgent}
+        title="Eliminar Agente"
+        message={`¿Estás seguro que deseas eliminar permanentemente al agente ${agentToDelete?.name}?`}
+        confirmText="Sí, eliminar agente"
+        isDanger={true}
+      />
+
+      <ConfirmModal
+        isOpen={!!paymentToDelete}
+        onClose={() => setPaymentToDelete(null)}
+        onConfirm={handleDeletePayment}
+        title="Eliminar Pago"
+        message={`¿Estás seguro que deseas eliminar el registro del pago de ${paymentToDelete?.period_month}? Esto podría cambiar el estado de facturación del cliente a deuda.`}
+        confirmText="Sí, eliminar pago"
+        isDanger={true}
+      />
     </div>
   );
 }

@@ -30,9 +30,7 @@ export function ClientCard({ client, onDelete }) {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                if (window.confirm(`¿Seguro que deseas eliminar a ${client.name}?`)) {
-                  onDelete?.(client.id);
-                }
+                onDelete?.(client);
               }}
               className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
               title="Eliminar cliente"
