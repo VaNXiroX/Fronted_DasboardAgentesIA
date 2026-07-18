@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Bot, DollarSign, AlertTriangle, CheckCircle, AlertCircle, TrendingUp, Clock } from 'lucide-react';
+import { Users, Bot, DollarSign, AlertTriangle, CheckCircle, AlertCircle, TrendingUp, Clock, Cpu } from 'lucide-react';
 import { KpiCard } from '../components/ui/KpiCard';
 import { BillingBadge } from '../components/ui/BillingBadge';
 import { ClientsTable } from '../components/clients/ClientsTable';
@@ -9,6 +9,7 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { useClientsOverview } from '../hooks/useClientsOverview';
 import { useBillingMonth } from '../hooks/useBillingMonth';
 import { useMetricsMrr } from '../hooks/useMetricsMrr';
+import { useAgencyUsage } from '../hooks/useAgencyUsage';
 import { useRefresh } from '../components/layout/Layout';
 import { formatMXN, formatDateShort } from '../lib/format';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -17,13 +18,15 @@ export default function Dashboard() {
   const { data, loading, refetch: refetchClients } = useClientsOverview();
   const { data: billingData, loading: loadingBilling, refetch: refetchBilling } = useBillingMonth();
   const { data: mrrData, loading: loadingMrr, refetch: refetchMrr } = useMetricsMrr();
+  const { data: usageData, loading: loadingUsage, refetch: refetchUsage } = useAgencyUsage();
   const { refreshKey } = useRefresh();
 
   useEffect(() => {
     refetchClients();
     refetchBilling();
     refetchMrr();
-  }, [refreshKey, refetchClients, refetchBilling, refetchMrr]);
+    refetchUsage();
+  }, [refreshKey, refetchClients, refetchBilling, refetchMrr, refetchUsage]);
 
   // Derived KPIs
   const total = data.length;
@@ -80,6 +83,13 @@ export default function Dashboard() {
           value={loading ? '—' : debtors}
           accent={debtors > 0 ? 'red' : 'emerald'}
           loading={loading}
+        />
+        <KpiCard
+          icon={Cpu}
+          label="Costo API este mes"
+          value={loadingUsage ? '—' : formatMXN(usageData?.total_cost_usd ?? 0).replace('MXN', 'USD')}
+          accent="slate"
+          loading={loadingUsage}
         />
       </div>
 

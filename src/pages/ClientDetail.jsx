@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, Edit2, Plus, Trash2, CreditCard, FileText, Bot, Download
+  ArrowLeft, Edit2, Plus, Trash2, CreditCard, FileText, Bot, Download, Cpu
 } from 'lucide-react';
 import { getClient } from '../api/clients';
 import { getClientAgents } from '../api/agents';
 import { getBilling, deletePayment, exportBillingCsv } from '../api/payments';
+import { getClientUsage } from '../api/usage';
 import { KpiCard } from '../components/ui/KpiCard';
 import { BillingBadge } from '../components/ui/BillingBadge';
 import { StatusBadge } from '../components/ui/StatusBadge';
@@ -36,6 +37,7 @@ export default function ClientDetail() {
   const [client, setClient] = useState(null);
   const [agents, setAgents] = useState([]);
   const [billing, setBilling] = useState(null);
+  const [usage, setUsage] = useState(null);
   const [billingError, setBillingError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
@@ -49,14 +51,16 @@ export default function ClientDetail() {
     setLoading(true);
     setBillingError(false);
     try {
-      const [c, ag, bi] = await Promise.all([
+      const [c, ag, bi, us] = await Promise.all([
         getClient(id),
         getClientAgents(id),
         getBilling(id).catch(() => null),
+        getClientUsage(id).catch(() => null),
       ]);
       setClient(c);
       setAgents(ag);
       setBilling(bi);
+      setUsage(us);
       setBillingError(bi === null);
       setClientName?.(c.name);
     } catch {
@@ -188,6 +192,48 @@ export default function ClientDetail() {
                 </div>
               )}
             </dl>
+          </div>
+
+          {/* Consumo del mes */}
+          <div className="bg-slate-800 border border-slate-700 rounded-xl p-5">
+            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+              <Cpu className="w-5 h-5 text-amber-500" />
+              Consumo del mes
+            </h2>
+            {usage ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <p className="text-slate-400 text-xs mb-1">Tokens usados</p>
+                  <p className="text-2xl font-bold text-white">
+                    {usage.tokens_used?.toLocaleString() ?? 0}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-slate-400 text-xs mb-1">Costo estimado</p>
+                  <p className="text-2xl font-bold text-emerald-400">
+                    ${usage.cost_usd?.toFixed(2) ?? '0.00'} <span className="text-sm font-normal text-slate-400">USD</span>
+                  </p>
+                </div>
+                <div>
+                  <p className="text-slate-400 text-xs mb-1 flex items-center justify-between">
+                    <span>vs. Mes anterior</span>
+                    <span className="text-[10px] text-slate-500">Prev: ${usage.previous_month_cost_usd?.toFixed(2) ?? '0.00'}</span>
+                  </p>
+                  <div className="mt-2">
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                       <div 
+                         className={`h-2 rounded-full transition-all ${usage.cost_usd > (usage.previous_month_cost_usd || 0) ? 'bg-amber-400' : 'bg-emerald-400'}`} 
+                         style={{ width: `${Math.min(((usage.cost_usd || 0) / (usage.previous_month_cost_usd || 1)) * 100, 100)}%` }} 
+                       />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-sm text-slate-500 flex items-center justify-center py-4 italic">
+                Métricas de consumo no disponibles
+              </div>
+            )}
           </div>
 
           {/* Agents mini-table */}
