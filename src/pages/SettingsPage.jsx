@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Settings, Server, Shield, Database, RefreshCw, CreditCard } from 'lucide-react';
 import { getPlans } from '../api/plans';
-import { checkHealth } from '../api/health';
+import { getHealth } from '../api/health';
 import { useToast } from '../lib/toast';
 
 // Tabs
@@ -125,7 +125,7 @@ function SystemSection() {
 
   const fetchHealth = () => {
     setLoading(true);
-    checkHealth()
+    getHealth()
       .then(setHealth)
       .catch(() => setHealth({ status: 'error', database: 'disconnected' }))
       .finally(() => setLoading(false));
