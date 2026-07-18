@@ -11,6 +11,15 @@ module.exports = {
         sans: ['"Bebas Neue"', 'Inter', 'system-ui', 'sans-serif'],
         display: ['"Bebas Neue"', 'Inter', 'system-ui', 'sans-serif'],
       },
+      fontSize: {
+        'xs': ['0.95rem', { lineHeight: '1.2rem' }],
+        'sm': ['1.05rem', { lineHeight: '1.25rem' }],
+        'base': ['1.15rem', { lineHeight: '1.5rem' }],
+        'lg': ['1.3rem', { lineHeight: '1.75rem' }],
+        'xl': ['1.5rem', { lineHeight: '2rem' }],
+        '2xl': ['1.8rem', { lineHeight: '2.25rem' }],
+        '3xl': ['2.25rem', { lineHeight: '2.5rem' }],
+      },
       colors: {
         // Ámbar Rojo brand palette
         brand: {
