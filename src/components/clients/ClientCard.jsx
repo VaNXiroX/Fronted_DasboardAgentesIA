@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BillingBadge } from '../ui/BillingBadge';
 import { StatusBadge } from '../ui/StatusBadge';
-import { formatMXN, formatSinceDate, getInitials } from '../../lib/format';
+import { formatMXN, formatSinceDate, getInitials, formatMonthLabel } from '../../lib/format';
 import { Bot, ArrowRight } from 'lucide-react';
 
 export function ClientCard({ client }) {
@@ -36,6 +36,23 @@ export function ClientCard({ client }) {
       {billing && (
         <div className="mb-3">
           <BillingBadge status={billing.billing_status} monthsOwed={billing.months_owed} />
+          <p className="text-xs mt-1.5 font-medium">
+            {billing.billing_status === 'current' && (
+              <span className="text-emerald-400">
+                Vence en {billing.days_until_overdue ?? 0} días
+              </span>
+            )}
+            {billing.billing_status === 'overdue' && (
+              <span className="text-amber-400">
+                Atrasado desde {billing.overdue_since ? formatMonthLabel(billing.overdue_since.substring(0, 7)) : '—'}
+              </span>
+            )}
+            {billing.billing_status === 'critical' && (
+              <span className="text-red-400">
+                Atrasado desde {billing.overdue_since ? formatMonthLabel(billing.overdue_since.substring(0, 7)) : '—'} · {billing.months_owed ?? 0} meses
+              </span>
+            )}
+          </p>
         </div>
       )}
 

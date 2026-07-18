@@ -19,7 +19,7 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { SkeletonTable } from '../components/ui/skeleton';
 import { useToast } from '../lib/toast';
 import { useRefresh } from '../components/layout/Layout';
-import { formatMXN, formatDateShort, formatSinceDate } from '../lib/format';
+import { formatMXN, formatDateShort, formatSinceDate, formatMonthLabel } from '../lib/format';
 
 const TABS = [
   { id: 'resumen',     label: 'Resumen',     icon: FileText },
@@ -244,6 +244,23 @@ export default function ClientDetail() {
             </div>
           ) : billing ? (
             <>
+              {/* Next payment info */}
+              {billing.next_payment_due && (
+                <div className="flex items-center justify-end mb-4 bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3">
+                  <p className="text-sm">
+                    <span className="text-slate-400">Próximo pago: </span>
+                    <span className="text-white font-medium">
+                      {formatMonthLabel(billing.next_payment_due.substring(0, 7))}
+                    </span>
+                    {billing.days_until_overdue != null && (
+                      <span className="text-emerald-400 font-medium ml-1">
+                        ({billing.days_until_overdue} días)
+                      </span>
+                    )}
+                  </p>
+                </div>
+              )}
+
               {/* KPI cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <KpiCard icon={FileText} label="Meses activo" value={billing.months_active} accent="slate" />
