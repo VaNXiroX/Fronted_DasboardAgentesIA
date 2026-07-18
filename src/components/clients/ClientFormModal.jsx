@@ -95,18 +95,6 @@ export function ClientFormModal({ open, onClose, onSuccess, initial }) {
           />
         </div>
 
-        {/* Slug */}
-        <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1.5">Slug</label>
-          <input
-            name="slug"
-            value={form.slug}
-            onChange={handleChange}
-            placeholder="nombre-del-cliente"
-            className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30"
-          />
-        </div>
-
         {/* Contact Name */}
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-1.5">Nombre del Contacto</label>
@@ -156,7 +144,7 @@ export function ClientFormModal({ open, onClose, onSuccess, initial }) {
             <option value="">Selecciona un plan...</option>
             {plans.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.name}
+                {p.name.toUpperCase()}
               </option>
             ))}
           </select>
