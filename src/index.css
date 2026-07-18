@@ -15,7 +15,8 @@ html, body, #root {
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Bebas Neue', 'Inter', system-ui, sans-serif;
+  letter-spacing: 0.02em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #FFFFFF;
