@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { BillingBadge } from '../ui/BillingBadge';
 import { StatusBadge } from '../ui/StatusBadge';
 import { formatMXN, formatSinceDate, getInitials, formatMonthLabel } from '../../lib/format';
-import { Bot, ArrowRight } from 'lucide-react';
+import { Bot, ArrowRight, Trash2 } from 'lucide-react';
 
-export function ClientCard({ client }) {
+export function ClientCard({ client, onDelete }) {
   const navigate = useNavigate();
   const { billing, agents = [] } = client;
   const activeAgents = agents.filter((a) => a.status === 'active').length;
@@ -22,9 +22,23 @@ export function ClientCard({ client }) {
           <span className="text-slate-900 font-bold text-sm">{initials}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="text-white font-semibold text-sm truncate">{client.name}</h3>
-            <StatusBadge status={client.status} />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <h3 className="text-white font-semibold text-sm truncate">{client.name}</h3>
+              <StatusBadge status={client.status} />
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (window.confirm(`¿Seguro que deseas eliminar a ${client.name}?`)) {
+                  onDelete?.(client.id);
+                }
+              }}
+              className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              title="Eliminar cliente"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
           </div>
           <p className="text-slate-500 text-xs mt-0.5">
             {billing?.plan_name ?? 'Sin plan'}

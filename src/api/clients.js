@@ -13,3 +13,6 @@ export const createClient = (data) =>
 
 export const updateClient = (id, data) =>
   apiClient.put(`/api/clients/${id}`, data).then((r) => r.data);
+
+export const deleteClient = (id) =>
+  apiClient.delete(`/api/clients/${id}`).then((r) => r.data);

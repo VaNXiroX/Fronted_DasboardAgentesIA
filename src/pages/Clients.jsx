@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Users, Plus } from 'lucide-react';
 import { ClientCard } from '../components/clients/ClientCard';
 import { ClientFormModal } from '../components/clients/ClientFormModal';
+import { deleteClient } from '../api/clients';
+import { useToast } from '../lib/toast';
 import { SkeletonCard } from '../components/ui/skeleton';
 import { EmptyState } from '../components/ui/EmptyState';
 import { useClientsOverview } from '../hooks/useClientsOverview';
@@ -17,12 +19,23 @@ const FILTERS = [
 export default function Clients() {
   const { data, loading, refetch } = useClientsOverview();
   const { refreshKey } = useRefresh();
+  const toast = useToast();
   const [filter, setFilter] = useState('all');
   const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
     refetch();
   }, [refreshKey]);
+
+  const handleDeleteClient = async (id) => {
+    try {
+      await deleteClient(id);
+      toast.success('Cliente eliminado');
+      refetch();
+    } catch {
+      toast.error('Error al eliminar el cliente');
+    }
+  };
 
   const filtered = filter === 'all'
     ? data
@@ -87,7 +100,7 @@ export default function Clients() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filtered.map((c) => (
-            <ClientCard key={c.id} client={c} />
+            <ClientCard key={c.id} client={c} onDelete={handleDeleteClient} />
           ))}
         </div>
       )}

@@ -10,17 +10,20 @@ export const createAgent = (clientId, data) =>
 export const updateAgent = (clientId, agentId, data) =>
   apiClient.put(`/api/clients/${clientId}/agents/${agentId}`, data).then((r) => r.data);
 
-// Fan-out: get all agents from all clients, attaching client_name
+export const deleteAgent = (clientId, agentId) =>
+  apiClient.delete(`/api/clients/${clientId}/agents/${agentId}`).then((r) => r.data);
+
+// Optimized: Get all agents in a single request and join with clients
 export const getAllAgents = async () => {
-  const clients = await getClients();
-  const results = await Promise.allSettled(
-    clients.map((c) =>
-      getClientAgents(c.id).then((agents) =>
-        agents.map((a) => ({ ...a, client_name: c.name, client_slug: c.slug }))
-      )
-    )
-  );
-  return results
-    .filter((r) => r.status === 'fulfilled')
-    .flatMap((r) => r.value);
+  const [clients, agents] = await Promise.all([
+    getClients(),
+    apiClient.get('/api/agents').then((r) => r.data)
+  ]);
+
+  const clientsMap = new Map(clients.map((c) => [c.id, c]));
+
+  return agents.map((a) => {
+    const c = clientsMap.get(a.client_id) || {};
+    return { ...a, client_name: c.name, client_slug: c.slug };
+  });
 };

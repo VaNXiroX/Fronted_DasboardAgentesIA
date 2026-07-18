@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Edit2, Plus, Trash2, CreditCard, FileText, Bot, Download, Cpu
 } from 'lucide-react';
-import { getClient } from '../api/clients';
-import { getClientAgents } from '../api/agents';
+import { getClient, deleteClient } from '../api/clients';
+import { getClientAgents, deleteAgent } from '../api/agents';
 import { getBilling, deletePayment, exportBillingCsv } from '../api/payments';
 import { getClientUsage } from '../api/usage';
 import { KpiCard } from '../components/ui/KpiCard';
@@ -93,6 +93,28 @@ export default function ClientDetail() {
     }
   };
 
+  const handleDeleteClient = async () => {
+    if (!window.confirm(`¿Seguro que deseas eliminar el cliente ${client.name}?`)) return;
+    try {
+      await deleteClient(id);
+      toast.success('Cliente eliminado');
+      navigate('/clients');
+    } catch {
+      toast.error('Error al eliminar el cliente');
+    }
+  };
+
+  const handleDeleteAgent = async (agent) => {
+    if (!window.confirm(`¿Seguro que deseas eliminar el agente ${agent.name}?`)) return;
+    try {
+      await deleteAgent(id, agent.id);
+      toast.success('Agente eliminado');
+      fetchAll();
+    } catch {
+      toast.error('Error al eliminar el agente');
+    }
+  };
+
   const handleExportCsv = async () => {
     try {
       setExporting(true);
@@ -147,13 +169,22 @@ export default function ClientDetail() {
             <p className="text-slate-500 text-sm">{formatSinceDate(client.start_date)}</p>
           </div>
         </div>
-        <button
-          onClick={() => setShowEdit(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-600 text-slate-300 hover:text-amber-400 hover:border-amber-500/40 transition-colors text-sm"
-        >
-          <Edit2 className="w-4 h-4" />
-          Editar
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowEdit(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-600 text-slate-300 hover:text-amber-400 hover:border-amber-500/40 transition-colors text-sm"
+          >
+            <Edit2 className="w-4 h-4" />
+            Editar
+          </button>
+          <button
+            onClick={handleDeleteClient}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-600 text-slate-300 hover:text-red-400 hover:border-red-500/40 transition-colors text-sm"
+          >
+            <Trash2 className="w-4 h-4" />
+            Eliminar
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -272,13 +303,22 @@ export default function ClientDetail() {
                         <td className="px-4 py-3"><StatusBadge status={a.status} /></td>
                         <td className="px-4 py-3 font-mono text-slate-500 text-xs">{a.workflow_id || '—'}</td>
                         <td className="px-4 py-3">
-                          <button
-                            onClick={() => { setEditingAgent(a); setShowAgentForm(true); }}
-                            className="p-1.5 rounded-lg text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 transition-colors"
-                            title="Editar agente"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center gap-1 justify-end">
+                            <button
+                              onClick={() => { setEditingAgent(a); setShowAgentForm(true); }}
+                              className="p-1.5 rounded-lg text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 transition-colors"
+                              title="Editar agente"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteAgent(a)}
+                              className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                              title="Eliminar agente"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
