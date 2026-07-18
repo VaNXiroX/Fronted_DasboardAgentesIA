@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Bot, ScrollText, LogOut, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, Bot, ScrollText, LogOut, Settings, Flame } from 'lucide-react';
 import { useHealth } from '../../hooks/useHealth';
 import { useAuth } from '../../context/AuthContext';
 import { LogsModal } from '../LogsModal';
@@ -45,8 +45,8 @@ export function Sidebar({ open, onClose }) {
       >
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-700">
-          <div className="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center flex-shrink-0">
-            <span className="text-slate-900 font-bold text-sm">AR</span>
+          <div className="w-9 h-9 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center flex-shrink-0">
+            <Flame className="w-5 h-5 text-amber-500" />
           </div>
           <div>
             <p className="text-white font-display text-lg leading-tight tracking-wider">ÁMBAR ROJO</p>

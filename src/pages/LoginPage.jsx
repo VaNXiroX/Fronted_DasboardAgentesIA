@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Activity, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Activity, Eye, EyeOff, AlertCircle, Flame } from 'lucide-react';
 
 export default function LoginPage() {
   const { login, loading } = useAuth();
@@ -47,8 +47,8 @@ export default function LoginPage() {
         <div className="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-2xl p-8 shadow-2xl">
           {/* Logo */}
           <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center">
-              <span className="text-slate-900 font-black text-base">AR</span>
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
+              <Flame className="w-6 h-6 text-amber-500" />
             </div>
             <div>
               <p className="text-white font-display text-2xl leading-tight tracking-wider">ÁMBAR ROJO</p>

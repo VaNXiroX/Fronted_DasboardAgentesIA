@@ -42,13 +42,8 @@ export function Header({ onMenuClick, onRefresh, isRefreshing, clientName }) {
         </nav>
       </div>
 
-      {/* Right: search + refresh */}
+      {/* Right: refresh */}
       <div className="flex items-center gap-2">
-        {/* Cosmetic search */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-500 text-sm cursor-default select-none">
-          <Search className="w-4 h-4" />
-          <span>Buscar...</span>
-        </div>
 
         {/* Refresh */}
         <button
