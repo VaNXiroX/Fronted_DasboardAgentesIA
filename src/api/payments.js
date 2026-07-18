@@ -11,3 +11,6 @@ export const registerPayment = (clientId, data) =>
 
 export const deletePayment = (clientId, paymentId) =>
   apiClient.delete(`/api/clients/${clientId}/payments/${paymentId}`).then((r) => r.data);
+
+export const exportBillingCsv = (clientId) =>
+  apiClient.get(`/api/clients/${clientId}/billing/export`, { responseType: 'blob' }).then((r) => r.data);

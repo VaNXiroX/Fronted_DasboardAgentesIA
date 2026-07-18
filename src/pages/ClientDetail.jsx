@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, Edit2, Plus, Trash2, CreditCard, FileText, Bot
+  ArrowLeft, Edit2, Plus, Trash2, CreditCard, FileText, Bot, Download
 } from 'lucide-react';
 import { getClient } from '../api/clients';
 import { getClientAgents } from '../api/agents';
-import { getBilling, deletePayment } from '../api/payments';
+import { getBilling, deletePayment, exportBillingCsv } from '../api/payments';
 import { KpiCard } from '../components/ui/KpiCard';
 import { BillingBadge } from '../components/ui/BillingBadge';
 import { StatusBadge } from '../components/ui/StatusBadge';
@@ -38,6 +38,7 @@ export default function ClientDetail() {
   const [billing, setBilling] = useState(null);
   const [billingError, setBillingError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
 
   const [showEdit, setShowEdit] = useState(false);
   const [showAgentForm, setShowAgentForm] = useState(false);
@@ -85,6 +86,26 @@ export default function ClientDetail() {
     } catch {
       setBilling(prev); // rollback
       toast.error('Error al eliminar el pago');
+    }
+  };
+
+  const handleExportCsv = async () => {
+    try {
+      setExporting(true);
+      const blob = await exportBillingCsv(id);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `facturacion_cliente_${id}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success('CSV exportado');
+    } catch {
+      toast.error('Error al exportar CSV');
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -298,13 +319,23 @@ export default function ClientDetail() {
               <div className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700">
                   <h2 className="text-white font-semibold">Historial de pagos</h2>
-                  <button
-                    onClick={() => setShowPaymentModal(true)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 transition-colors text-xs font-medium"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    Registrar pago
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleExportCsv}
+                      disabled={exporting}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors text-xs font-medium disabled:opacity-50"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      {exporting ? 'Exportando...' : 'Exportar CSV'}
+                    </button>
+                    <button
+                      onClick={() => setShowPaymentModal(true)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 transition-colors text-xs font-medium"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Registrar pago
+                    </button>
+                  </div>
                 </div>
                 <div className="p-4">
                   <PaymentsTable
