@@ -8,6 +8,9 @@ import { slugify } from '../../lib/format';
 const EMPTY_FORM = {
   name: '',
   slug: '',
+  contact_name: '',
+  email: '',
+  phone: '',
   plan_id: '',
   status: 'active',
   start_date: new Date().toISOString().slice(0, 10),
@@ -104,6 +107,43 @@ export function ClientFormModal({ open, onClose, onSuccess, initial }) {
           />
         </div>
 
+        {/* Contact Name */}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-1.5">Nombre del Contacto</label>
+          <input
+            name="contact_name"
+            value={form.contact_name || ''}
+            onChange={handleChange}
+            placeholder="Ej. Juan Pérez"
+            className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30"
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-1.5">Correo Electrónico</label>
+          <input
+            type="email"
+            name="email"
+            value={form.email || ''}
+            onChange={handleChange}
+            placeholder="correo@empresa.com"
+            className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30"
+          />
+        </div>
+
+        {/* Phone */}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-1.5">Teléfono</label>
+          <input
+            name="phone"
+            value={form.phone || ''}
+            onChange={handleChange}
+            placeholder="+52 55 1234 5678"
+            className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30"
+          />
+        </div>
+
         {/* Plan */}
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-1.5">Plan</label>
@@ -116,7 +156,7 @@ export function ClientFormModal({ open, onClose, onSuccess, initial }) {
             <option value="">Selecciona un plan...</option>
             {plans.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.name} - ${p.monthly_fee ?? 0}/mes
+                {p.name}
               </option>
             ))}
           </select>

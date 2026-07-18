@@ -228,6 +228,9 @@ export default function ClientDetail() {
               <InfoRow label="Plan" value={billing?.plan_name ?? 'Sin plan'} />
               <InfoRow label="Estado" value={<StatusBadge status={client.status} />} />
               <InfoRow label="Inicio" value={formatDateShort(client.start_date)} />
+              {client.contact_name && <InfoRow label="Contacto" value={client.contact_name} />}
+              {client.email && <InfoRow label="Correo" value={client.email} />}
+              {client.phone && <InfoRow label="Teléfono" value={client.phone} />}
               {client.notes && (
                 <div className="sm:col-span-2">
                   <dt className="text-slate-400 mb-1">Notas</dt>
