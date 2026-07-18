@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Bot, ScrollText, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, Bot, ScrollText, LogOut, Settings } from 'lucide-react';
 import { useHealth } from '../../hooks/useHealth';
 import { useAuth } from '../../context/AuthContext';
 import { LogsModal } from '../LogsModal';
 
 const navItems = [
-  { to: '/',        label: 'Dashboard', icon: LayoutDashboard, exact: true },
-  { to: '/clients', label: 'Clientes',  icon: Users },
-  { to: '/agents',  label: 'Agentes',   icon: Bot },
+  { to: '/',        label: 'Dashboard',     icon: LayoutDashboard, exact: true },
+  { to: '/clients', label: 'Clientes',      icon: Users },
+  { to: '/agents',  label: 'Agentes',       icon: Bot },
+  { to: '/settings',label: 'Configuración', icon: Settings },
 ];
 
 export function Sidebar({ open, onClose }) {

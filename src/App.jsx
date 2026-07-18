@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Clients from './pages/Clients';
 import ClientDetail from './pages/ClientDetail';
 import Agents from './pages/Agents';
+import SettingsPage from './pages/SettingsPage';
 
 function NotFound() {
   return (
@@ -37,6 +38,7 @@ function App() {
                 <Route path="/clients"       element={<Clients />} />
                 <Route path="/clients/:id"   element={<ClientDetail />} />
                 <Route path="/agents"        element={<Agents />} />
+                <Route path="/settings"      element={<SettingsPage />} />
                 <Route path="*"              element={<NotFound />} />
               </Route>
             </Route>
