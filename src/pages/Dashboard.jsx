@@ -286,7 +286,7 @@ function MrrChartPanel({ data, loading }) {
         </h2>
         <p className="text-slate-400 text-xs mt-1">Comparativa de los últimos 6 meses</p>
       </div>
-      <div className="h-72 w-full">
+      <div className="h-72 w-full" style={{ minWidth: 0, minHeight: 0 }}>
         {data && data.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
