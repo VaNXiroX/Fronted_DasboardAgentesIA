@@ -83,7 +83,3 @@ export const getInitials = (name = '') => {
     .map((w) => w[0]?.toUpperCase() ?? '')
     .join('');
 };
-
-// Slug from name
-export const slugify = (name = '') =>
-  name.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');

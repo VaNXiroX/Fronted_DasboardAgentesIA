@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['"Bebas Neue"', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         // Ámbar Rojo brand palette

@@ -49,7 +49,7 @@ export function Sidebar({ open, onClose }) {
             <span className="text-slate-900 font-bold text-sm">AR</span>
           </div>
           <div>
-            <p className="text-white font-bold text-sm leading-tight">Ámbar Rojo</p>
+            <p className="text-white font-display text-lg leading-tight tracking-wider">ÁMBAR ROJO</p>
             <p className="text-slate-400 text-xs">Operations</p>
           </div>
         </div>

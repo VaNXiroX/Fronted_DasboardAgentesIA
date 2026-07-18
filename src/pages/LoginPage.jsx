@@ -51,12 +51,12 @@ export default function LoginPage() {
               <span className="text-slate-900 font-black text-base">AR</span>
             </div>
             <div>
-              <p className="text-white font-bold text-lg leading-tight">Ámbar Rojo</p>
+              <p className="text-white font-display text-2xl leading-tight tracking-wider">ÁMBAR ROJO</p>
               <p className="text-slate-400 text-xs">Operations Dashboard</p>
             </div>
           </div>
 
-          <h1 className="text-xl font-bold text-white text-center mb-1">Iniciar sesión</h1>
+          <h1 className="text-2xl font-display tracking-wide text-white text-center mb-1">INICIAR SESIÓN</h1>
           <p className="text-slate-500 text-sm text-center mb-6">
             Accede a tu panel de operaciones
           </p>

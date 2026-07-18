@@ -22,7 +22,7 @@ export default function SettingsPage() {
           <Settings className="w-6 h-6 text-amber-500" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">Configuración</h1>
+          <h1 className="text-2xl font-display tracking-wide text-white">CONFIGURACIÓN</h1>
           <p className="text-slate-400 text-sm">Gestiona planes, seguridad y estado del sistema</p>
         </div>
       </div>

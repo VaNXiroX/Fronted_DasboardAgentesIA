@@ -3,9 +3,10 @@ import { useLocation, useParams } from 'react-router-dom';
 import { Menu, Search, RefreshCw } from 'lucide-react';
 
 const routeLabels = {
-  '/':        'Dashboard',
-  '/clients': 'Clientes',
-  '/agents':  'Agentes',
+  '/':         'Dashboard',
+  '/clients':  'Clientes',
+  '/agents':   'Agentes',
+  '/settings': 'Configuración',
 };
 
 export function Header({ onMenuClick, onRefresh, isRefreshing, clientName }) {

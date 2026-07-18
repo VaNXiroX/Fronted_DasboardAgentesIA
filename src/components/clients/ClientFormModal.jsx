@@ -3,11 +3,9 @@ import { Modal } from '../ui/Modal';
 import { createClient, updateClient } from '../../api/clients';
 import apiClient from '../../api/client';
 import { useToast } from '../../lib/toast';
-import { slugify } from '../../lib/format';
 
 const EMPTY_FORM = {
   name: '',
-  slug: '',
   contact_name: '',
   email: '',
   phone: '',
@@ -45,11 +43,7 @@ export function ClientFormModal({ open, onClose, onSuccess, initial }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((f) => {
-      const updated = { ...f, [name]: value };
-      if (name === 'name' && !isEdit) updated.slug = slugify(value);
-      return updated;
-    });
+    setForm((f) => ({ ...f, [name]: value }));
   };
 
   const handleSubmit = async (e) => {

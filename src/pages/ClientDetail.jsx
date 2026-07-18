@@ -174,7 +174,7 @@ export default function ClientDetail() {
           </button>
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-xl font-bold text-white">{client.name}</h1>
+              <h1 className="text-xl font-display tracking-wide text-white">{client.name.toUpperCase()}</h1>
               {billing && <BillingBadge status={billing.billing_status} monthsOwed={billing.months_owed} />}
               <StatusBadge status={client.status} />
             </div>
